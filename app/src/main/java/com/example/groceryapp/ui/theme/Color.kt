@@ -9,3 +9,11 @@ val Pink80 = Color(0xFFEFB8C8)
 val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
+
+// Цвета из дизайна Figma
+val MainGreen = Color(0xFF7CB342)
+val LightGreen = Color(0xFF9CCC65)
+val DarkGray = Color(0xFF212121)
+val MediumGray = Color(0xFF757575)
+val LightGray = Color(0xFFF5F5F5)
+val White = Color(0xFFFFFFFF)
