@@ -13,8 +13,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,33 +30,52 @@ import androidx.compose.ui.unit.sp
 import com.example.groceryapp.domain.model.OnboardingPage
 import com.example.groceryapp.ui.theme.*
 import com.example.groceryapp.R
+import kotlinx.coroutines.launch
 
 @Composable
-fun OnboardingScreen(
-    viewModel: OnboardingViewModel
+fun OnboardingScreen1(
+    viewModel: OnboardingViewModel,
+    onClick: () -> Unit,
+    onNextSplashScreen: () -> Unit
 ) {
-    val pages by viewModel.pages.collectAsState()
-    val pagerState = rememberPagerState(pageCount = { pages.size })
+    val pages by viewModel.firstOnboardingPages.collectAsState()
+    val pagerState = rememberPagerState(pageCount = {
+        if (pages.isEmpty()) 0 else pages.size + 1
+    })
 
-    OnboardingContent(
+    LaunchedEffect(pagerState.currentPage) {
+        if (pagerState.currentPage == pages.size && pages.isNotEmpty()){
+            onNextSplashScreen()
+        }
+    }
+
+    OnboardingContent1(
         pages = pages,
-        pagerState = pagerState
+        pagerState = pagerState,
+        onClick = onClick,
+        onNextSplashScreen = onNextSplashScreen
     )
 }
 
 @Composable
-fun OnboardingContent(
+fun OnboardingContent1(
     pages: List<OnboardingPage>,
-    pagerState: PagerState
+    pagerState: PagerState,
+    onClick: () -> Unit,
+    onNextSplashScreen: () -> Unit
 ) {
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+
         ) { position ->
-            OnboardingPagerItem(page = pages[position])
+            if (position < pages.size) {
+                OnboardingPagerItem1(page = pages[position])
+            }
         }
 
         Column(
@@ -65,15 +86,15 @@ fun OnboardingContent(
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            PagerIndicator(
+            PagerIndicator1(
                 pageSize = pages.size,
-                currentPage = pagerState.currentPage
+                currentPage = pagerState.currentPage.coerceAtMost(pages.size -1)
             )
 
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                onClick = { /*Todo навигация*/ },
+                onClick = { /* Todo : переход на экран регистрации */ },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
@@ -94,8 +115,8 @@ fun OnboardingContent(
 }
 
 @Composable
-fun OnboardingPagerItem(page: OnboardingPage) {
-    Box(modifier = Modifier.fillMaxSize()){
+fun OnboardingPagerItem1(page: OnboardingPage) {
+    Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = page.image),
             contentDescription = null,
@@ -134,7 +155,10 @@ fun OnboardingPagerItem(page: OnboardingPage) {
 }
 
 @Composable
-fun PagerIndicator(pageSize: Int, currentPage: Int) {
+fun PagerIndicator1(
+    pageSize: Int,
+    currentPage: Int
+) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -152,7 +176,7 @@ fun PagerIndicator(pageSize: Int, currentPage: Int) {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun OnboardingPreview() {
+fun OnboardingPreview1() {
     val mockPages = listOf(
         OnboardingPage(
             title = "Get Discounts\nOn All Products",
@@ -168,9 +192,11 @@ fun OnboardingPreview() {
     val pagerState = rememberPagerState(pageCount = { mockPages.size })
 
     GroceryAppTheme {
-        OnboardingContent(
+        OnboardingContent1(
             pages = mockPages,
-            pagerState = pagerState
+            pagerState = pagerState,
+            onClick = {},
+            onNextSplashScreen = {}
         )
     }
 }

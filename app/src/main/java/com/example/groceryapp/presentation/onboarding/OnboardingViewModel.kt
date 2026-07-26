@@ -14,14 +14,18 @@ class OnboardingViewModel @Inject constructor(
     private val repository: OnboardingRepository
 ) : ViewModel() {
 
-    private val _pages = MutableStateFlow<List<OnboardingPage>>(emptyList())
-    val pages: StateFlow<List<OnboardingPage>> = _pages.asStateFlow()
+    private val _firstOnboardingPages = MutableStateFlow<List<OnboardingPage>>(emptyList())
+    val firstOnboardingPages = _firstOnboardingPages.asStateFlow()
+
+    private val _secondOnboardingPages =MutableStateFlow<List<OnboardingPage>>(emptyList())
+    val secondOnboardingPages = _secondOnboardingPages.asStateFlow()
 
     init {
         loadsPages()
     }
 
     private fun loadsPages(){
-        _pages.value = repository.getOnboardingPages()
+        _firstOnboardingPages.value = repository.getOnboardingPages(0..2)
+        _secondOnboardingPages.value = repository.getOnboardingPages(3..6)
     }
 }
