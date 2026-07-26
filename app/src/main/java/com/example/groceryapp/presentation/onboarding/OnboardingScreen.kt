@@ -84,7 +84,9 @@ fun OnboardingContent(
                 Text(
                     text = "Get started",
                     color = White,
-                    fontWeight = FontWeight.Bold
+                    fontFamily = poppinsFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
                 )
             }
         }
@@ -110,7 +112,8 @@ fun OnboardingPagerItem(page: OnboardingPage) {
         ) {
             Text(
                 text = page.title,
-                fontSize = 28.sp,
+                fontSize = 30.sp,
+                fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 color = DarkGray,
@@ -119,7 +122,9 @@ fun OnboardingPagerItem(page: OnboardingPage) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = page.description,
-                fontSize = 14.sp,
+                fontFamily = poppinsFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 15.sp,
                 textAlign = TextAlign.Center,
                 color = MediumGray
             )
