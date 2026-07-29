@@ -12,7 +12,8 @@ navigation = "2.8.3"
 ksp = "2.0.21-1.0.26"
 hilt = "2.52"
 hiltNavigationCompose = "1.2.0"
-room = "2.6.1"  # Добавлена версия Room
+room = "2.6.1"
+foundation = "1.11.4"  # Добавлена версия Room
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -40,6 +41,7 @@ androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navig
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

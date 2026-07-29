@@ -56,172 +56,36 @@ import kotlinx.coroutines.launch
 @Composable
 fun OnboardingScreen2(
     viewModel: OnboardingViewModel,
-    onClick: () -> Unit,
-    onFirstSplashScreen: () -> Unit
+    onFinish: () -> Unit
 ) {
     val pages by viewModel.secondOnboardingPages.collectAsState()
-    val pagerState = rememberPagerState(pageCount = {
-        if (pages.isEmpty()) 0 else pages.size + 1
-    })
 
-    LaunchedEffect(pagerState.currentPage) {
-        if (pagerState.currentPage == pages.size && pages.isNotEmpty()) {
-            onFirstSplashScreen()
-        }
-    }
-
-    OnboardingContent2(
+    OnboardingContent(
         pages = pages,
-        pagerState = pagerState,
-        onClick = onClick,
-        onFirstSplashScreen = onFirstSplashScreen
+        layoutStyle = OnboardingLayoutStyle.DOME,
+        finishButtonText = "Get started",
+        onFinish = onFinish
     )
-}
-
-@Composable
-fun OnboardingContent2(
-    pages: List<OnboardingPage>,
-    pagerState: PagerState,
-    onClick: () -> Unit,
-    onFirstSplashScreen: () -> Unit
-) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.fillMaxSize()
-        ) { position ->
-            if (position < pages.size) {
-                OnboardingPagerItem2(
-                    page = pages[position]
-                )
-            }
-        }
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .navigationBarsPadding()
-            .padding(bottom = 40.dp),
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        PagerIndicator2(
-            pageSize = pages.size,
-            currentPage = pagerState.currentPage.coerceAtMost(pages.size - 1)
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-        Button(
-            onClick = {/* Todo : переход на экран регистрации */ },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp)
-                .height(56.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MainGreen),
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            Text(
-                text = "Get started",
-                color = White,
-                fontFamily = poppinsFontFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
-            )
-        }
-    }
-
-}
-
-@Composable
-fun OnboardingPagerItem2(page: OnboardingPage) {
-    val domeShape = remember {
-        GenericShape { size, _ ->
-            val arcHeight = size.width / 6
-
-            moveTo(0f, arcHeight)
-            quadraticBezierTo(
-                size.width / 2f, 0f,
-                size.width, arcHeight
-            )
-            lineTo(size.width, size.height)
-            lineTo(0f, size.height)
-            close()
-        }
-    }
-    Box(modifier = Modifier.fillMaxSize()) {
-        Image(
-            painter = painterResource(id = page.image),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.65f)
-        )
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.51f)
-                .align(Alignment.BottomCenter)
-                .background(
-                    color = White,
-                    shape = domeShape
-                )
-                .padding(top = 80.dp)
-                .padding(horizontal = 40.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = page.title,
-                fontSize = 30.sp,
-                fontFamily = poppinsFontFamily,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                color = DarkGray,
-                lineHeight = 36.sp
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                text = page.description,
-                fontFamily = poppinsFontFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = 15.sp,
-                textAlign = TextAlign.Center,
-                color = MediumGray
-            )
-        }
-    }
-
-}
-
-@Composable
-fun PagerIndicator2(pageSize: Int, currentPage: Int) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        repeat(pageSize) { index ->
-            Box(
-                modifier = Modifier
-                    .size(if (index == currentPage) 10.dp else 8.dp)
-                    .clip(CircleShape)
-                    .background(if (index == currentPage) MainGreen else LightGray)
-            )
-        }
-    }
 }
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun OnboardingPreview() {
-    val page = OnboardingPage(
-        title = "Buy Quality \n" +
-                "Dairy Products",
-        description = "Lorem ipsum dolor sit amet, consetetur \nsadipscing elitr, sed diam nonumy",
-        image = R.drawable.image_screen6
+fun OnboardingPreview2() {
+    val mockPages = listOf(
+        OnboardingPage(
+            title = "Buy Quality \n" +
+                    "Dairy Products",
+            description = "Lorem ipsum dolor sit amet, consetetur \nsadipscing elitr, sed diam nonumy",
+            imageKey = "image_screen6"
+        )
     )
 
     GroceryAppTheme {
-        OnboardingPagerItem2(page)
+        OnboardingContent(
+            pages = mockPages,
+            layoutStyle = OnboardingLayoutStyle.DOME,
+            finishButtonText = "Get started",
+            onFinish = {}
+        )
     }
 }
