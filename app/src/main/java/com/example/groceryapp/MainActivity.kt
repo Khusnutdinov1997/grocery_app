@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             GroceryAppTheme {
                 val viewModel: OnboardingViewModel = hiltViewModel()
-                NavGraph(viewModel = viewModel)
+                NavGraph()
             }
         }
     }
