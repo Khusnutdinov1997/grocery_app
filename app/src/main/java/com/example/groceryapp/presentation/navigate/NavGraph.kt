@@ -5,10 +5,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.groceryapp.presentation.home.HomeScreen
 import com.example.groceryapp.presentation.onboarding.OnboardingScreen1
 import com.example.groceryapp.presentation.onboarding.OnboardingScreen2
 import com.example.groceryapp.presentation.onboarding.OnboardingViewModel
+import com.example.groceryapp.presentation.registration.RegistrationScreen1
+import com.example.groceryapp.presentation.registration.RegistrationViewModel
 import com.example.groceryapp.utils.Screens
 
 @Composable
@@ -37,14 +38,19 @@ fun NavGraph() {
             OnboardingScreen2(
                 viewModel = viewModel,
                 onFinish = {
-                    navController.navigate(Screens.Home.route){
+                    navController.navigate(Screens.RegistrationScreen1.route){
                         popUpTo(Screens.Splash1.route){ inclusive = true}
                     }
                 }
             )
         }
-        composable(Screens.Home.route){
-            HomeScreen()
+        composable(Screens.RegistrationScreen1.route){
+            val viewModel: RegistrationViewModel = hiltViewModel()
+            RegistrationScreen1(
+                viewModel = viewModel,
+                onSignUpClick = {},
+                onLoginClick = {},
+            )
         }
     }
 
