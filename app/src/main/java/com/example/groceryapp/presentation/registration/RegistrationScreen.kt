@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -229,6 +230,7 @@ fun RegistrationContent2(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .systemBarsPadding()
                 .padding(top = 20.dp, start = 16.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
@@ -247,6 +249,7 @@ fun RegistrationContent2(
                 text = "Welcome",
                 color = White,
                 fontSize = 20.sp,
+                textAlign = TextAlign.Center,
                 fontWeight = FontWeight.SemiBold,
                 fontFamily = poppinsFontFamily
             )
@@ -352,12 +355,15 @@ fun CustomInputField(
         onValueChange = onValueChange,
         modifier = Modifier
             .fillMaxWidth(),
+        singleLine = true,
+        maxLines = 1,
         placeholder = {
             Text(
                 label, color = MediumGray
             )
         },
         leadingIcon = {
+            //iconbutton
             Icon(
                 icon,
                 contentDescription = null,
