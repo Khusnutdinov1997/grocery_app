@@ -204,11 +204,11 @@ fun RegistrationScreen2(
     RegistrationContent2(
         uiState = uiState,
         imageKey = "image_registration2",
-        onBackClick = { viewModel.onNavigateToRegistration1() },
+        onBackClick = viewModel::onNavigateToRegistration1,
         onEmailChange = viewModel::onEmailChanged,
         onPasswordChange = viewModel::onPasswordChanged,
         onLoginClick = viewModel::login,
-        onSignUpClick = { viewModel.onNavigateToRegistration1() }
+        onSignUpClick =  viewModel::onNavigateToRegistration1
     )
 
 }
