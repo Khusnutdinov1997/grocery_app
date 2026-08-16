@@ -1,6 +1,8 @@
 package com.example.groceryapp.presentation.navigate
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,38 +16,44 @@ import com.example.groceryapp.utils.Screens
 @Composable
 fun NavGraph() {
     val navController = rememberNavController()
+    val viewModel: OnboardingViewModel = hiltViewModel()
+    val isCompleted by viewModel.isOnboardingCompleted.collectAsState()
 
-    NavHost(
-        navController = navController,
-        startDestination = Screens.Splash1.route
-    ) {
-        composable(
-            Screens.Splash1.route
+    if (isCompleted != null) {
+        NavHost(
+            navController = navController,
+            startDestination = if (isCompleted == true) {
+                Screens.Home.route
+            } else {
+                Screens.Splash1.route
+            }
         ) {
-            val viewModel: OnboardingViewModel = hiltViewModel()
-            OnboardingScreen1(
-                viewModel = viewModel,
-                onFinish = {
-                    navController.navigate(Screens.Splash2.route)
-                }
-            )
-        }
-        composable(
-            Screens.Splash2.route
-        ){
-            val viewModel: OnboardingViewModel = hiltViewModel()
-            OnboardingScreen2(
-                viewModel = viewModel,
-                onFinish = {
-                    navController.navigate(Screens.Home.route){
-                        popUpTo(Screens.Splash1.route){ inclusive = true}
+            composable(
+                Screens.Splash1.route
+            ) {
+                OnboardingScreen1(
+                    viewModel = viewModel,
+                    onFinish = {
+                        navController.navigate(Screens.Splash2.route)
                     }
-                }
-            )
-        }
-        composable(Screens.Home.route){
-            HomeScreen()
+                )
+            }
+            composable(
+                Screens.Splash2.route
+            ) {
+                OnboardingScreen2(
+                    viewModel = viewModel,
+                    onFinish = {
+                        viewModel.completedOnboardingSave()
+                        navController.navigate(Screens.Home.route) {
+                            popUpTo(Screens.Splash1.route) { inclusive = true }
+                        }
+                    }
+                )
+            }
+            composable(Screens.Home.route) {
+                HomeScreen()
+            }
         }
     }
-
 }

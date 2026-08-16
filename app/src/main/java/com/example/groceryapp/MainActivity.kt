@@ -9,6 +9,7 @@ import com.example.groceryapp.presentation.navigate.NavGraph
 import com.example.groceryapp.presentation.onboarding.OnboardingScreen1
 import com.example.groceryapp.presentation.onboarding.OnboardingViewModel
 import com.example.groceryapp.ui.theme.GroceryAppTheme
+import com.example.groceryapp.utils.DataStoreManager
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -18,7 +19,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             GroceryAppTheme {
-                val viewModel: OnboardingViewModel = hiltViewModel()
                 NavGraph()
             }
         }
