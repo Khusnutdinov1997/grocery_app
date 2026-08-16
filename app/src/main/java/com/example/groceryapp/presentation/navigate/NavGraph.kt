@@ -7,10 +7,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.groceryapp.presentation.home.HomeScreen
 import com.example.groceryapp.presentation.onboarding.OnboardingScreen1
 import com.example.groceryapp.presentation.onboarding.OnboardingScreen2
 import com.example.groceryapp.presentation.onboarding.OnboardingViewModel
+import com.example.groceryapp.presentation.registration.RegistrationScreen1
+import com.example.groceryapp.presentation.registration.RegistrationViewModel
 import com.example.groceryapp.utils.Screens
 
 @Composable
