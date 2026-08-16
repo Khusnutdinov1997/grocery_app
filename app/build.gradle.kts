@@ -64,10 +64,11 @@ dependencies {
 
     implementation(libs.androidx.navigation.compose)
 
-    // Firebase
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth)
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
     // Hilt
     implementation(libs.hilt.android)
