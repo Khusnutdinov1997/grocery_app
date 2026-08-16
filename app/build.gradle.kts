@@ -70,6 +70,10 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 
+    implementation(libs.firebase.auth)
+    implementation(platform(libs.firebase.bom))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0")
+
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
