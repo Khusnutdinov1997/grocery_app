@@ -1,10 +1,9 @@
 package com.example.groceryapp.domain.repository
 
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import com.example.groceryapp.domain.model.User
 
 interface AuthRepository {
-    suspend fun login(email: String, password: String): Result<FirebaseUser?>
-    suspend fun signUp(email: String, password: String, phone: String): Result<FirebaseUser?>
+    suspend fun login(email: String, password: String): Result<User?>
+    suspend fun signUp(email: String, password: String, phone: String): Result<User?>
     fun logout()
 }
