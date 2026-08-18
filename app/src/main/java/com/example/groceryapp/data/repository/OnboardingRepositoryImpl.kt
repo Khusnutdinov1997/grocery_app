@@ -1,10 +1,16 @@
 package com.example.groceryapp.data.repository
 
+import com.example.groceryapp.domain.model.Completed
 import com.example.groceryapp.domain.model.OnboardingPage
 import com.example.groceryapp.domain.repository.OnboardingRepository
+import com.example.groceryapp.utils.DataStoreManager
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class OnboardingRepositoryImpl @Inject constructor() : OnboardingRepository {
+class OnboardingRepositoryImpl @Inject constructor(
+    private val dataStoreManager: DataStoreManager
+) : OnboardingRepository {
     override fun getOnboardingPages(range: IntRange?): List<OnboardingPage> {
         val allPages = listOf(
             OnboardingPage(
@@ -41,5 +47,14 @@ class OnboardingRepositoryImpl @Inject constructor() : OnboardingRepository {
                 imageKey = "image_screen7"            )
         )
         return range?.let { allPages.slice(it)} ?: allPages
+    }
+
+    override suspend fun saveOnboardingCompleted(completed: Boolean) {
+        dataStoreManager.saveOnboardingCompleted(true)
+    }
+
+    override fun isOnboardingCompleted(): Flow<Boolean> {
+        return dataStoreManager.getParamDataStore().map { preference ->
+            preference.completed }
     }
 }
