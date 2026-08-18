@@ -15,7 +15,6 @@ import javax.inject.Inject
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
     private val repository: OnboardingRepository,
-    private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
     private val _firstOnboardingPages = MutableStateFlow<List<OnboardingPage>>(emptyList())
@@ -39,14 +38,13 @@ class OnboardingViewModel @Inject constructor(
 
     private fun checkOnboardingStatus() {
         viewModelScope.launch {
-            val completed = dataStoreManager.getParamDataStore().first()
-            _isOnboardingCompleted.value = completed.completed
+            _isOnboardingCompleted.value = repository.isOnboardingCompleted().first()
         }
     }
 
     fun completedOnboardingSave() {
         viewModelScope.launch {
-            dataStoreManager.saveOnboardingCompleted(true)
+            repository.saveOnboardingCompleted(true)
             _isOnboardingCompleted.value = true
         }
     }

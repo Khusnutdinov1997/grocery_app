@@ -1,5 +1,6 @@
 package com.example.groceryapp.presentation.registration
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,19 +17,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,10 +43,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,22 +68,12 @@ import com.example.groceryapp.ui.theme.poppinsFontFamily
 @Composable
 fun RegistrationScreen1(
     viewModel: RegistrationViewModel,
-    onSignUpClick: () -> Unit,
-    onLoginClick: () -> Unit
 ) {
-    val uiState by viewModel.authState.collectAsState()
-
     RegistrationContent1(
-        imageKey = uiState.nameScreen,
-        onFirebaseClick = {},
-        onSignUpClick = {
-            viewModel.changeScreen("image_registration3")
-            onSignUpClick()
-        },
-        onLoginClick = {
-            viewModel.changeScreen("image_registration2")
-            onLoginClick()
-        }
+        imageKey = "image_registration1",
+        onFirebaseClick = { /* ... */ },
+        onSignUpClick = { viewModel.onNavigateToRegistration2() },
+        onLoginClick = { viewModel.onNavigateToRegistration2() }
     )
 }
 
@@ -189,33 +188,41 @@ fun RegistrationContent1(
 @Composable
 fun RegistrationScreen2(
     viewModel: RegistrationViewModel,
-    onBackClick: () -> Unit,
-    onLoginClick: () -> Unit,
-    onSignUpClick: () -> Unit
 ) {
     val uiState by viewModel.authState.collectAsState()
+    val context = LocalContext.current
+
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            if (event is RegistrationEvent.ShowError) {
+                Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     RegistrationContent2(
-        imageKey = uiState.nameScreen,
-        onBackClick = onBackClick,
-        onLoginClick = onLoginClick,
-        onSignUpClick = {
-            viewModel.changeScreen("image_registration1")
-            onSignUpClick()
-        }
+        uiState = uiState,
+        imageKey = "image_registration2",
+        onBackClick = { viewModel.onNavigateToRegistration1() },
+        onEmailChange = viewModel::onEmailChanged,
+        onPasswordChange = viewModel::onPasswordChanged,
+        onLoginClick = viewModel::login,
+        onSignUpClick = { viewModel.onNavigateToRegistration1() }
     )
 
 }
 
 @Composable
 fun RegistrationContent2(
+    uiState: RegistrationUiState,
     imageKey: String,
     onBackClick: () -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
     onLoginClick: () -> Unit,
     onSignUpClick: () -> Unit
 ) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -285,8 +292,8 @@ fun RegistrationContent2(
             Spacer(modifier = Modifier.height(32.dp))
 
             CustomInputField(
-                value = email,
-                onValueChange = { email = it },
+                value = uiState.email,
+                onValueChange = onEmailChange,
                 label = "Email Address",
                 icon = Icons.Default.Email
             )
@@ -294,45 +301,40 @@ fun RegistrationContent2(
             Spacer(modifier = Modifier.height(16.dp))
 
             CustomInputField(
-                value = password,
-                onValueChange = { password = it },
+                value = uiState.password,
+                onValueChange = onPasswordChange,
                 label = "Password",
                 icon = Icons.Default.Lock,
                 isPassword = true
             )
 
+            if (uiState.error != null) {
+                Text(text = uiState.error, color = Color.Red, fontSize = 14.sp, modifier = Modifier.padding(top = 8.dp), fontFamily = poppinsFontFamily)
+            }
+
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
                 onClick = onLoginClick,
+                enabled = !uiState.isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = MainGreen),
-                shape = RoundedCornerShape(12.dp),
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
+                shape = RoundedCornerShape(12.dp)
             ) {
-                Text(
-                    text = "Login",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = poppinsFontFamily
-                )
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = White, strokeWidth = 2.dp)
+                } else {
+                    Text(text = "Login", fontSize = 18.sp, fontWeight = FontWeight.Bold, fontFamily = poppinsFontFamily)
+                }
             }
 
-            TextButton(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally),
-                onClick = onLoginClick
-            ) {
+            TextButton(modifier = Modifier.align(Alignment.CenterHorizontally), onClick = onSignUpClick) {
                 Text(
                     text = buildAnnotatedString {
-                        append("Don’t have an account ? ")
-                        withStyle(
-                            style = SpanStyle(fontWeight = FontWeight.Bold, color = DarkGray)
-                        ) {
-                            append("Sign up")
-                        }
+                        append("Don’t have an account? ")
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, color = DarkGray)) { append("Sign up") }
                     },
                     color = MediumGray,
                     fontFamily = poppinsFontFamily
@@ -350,6 +352,8 @@ fun CustomInputField(
     icon: ImageVector,
     isPassword: Boolean = false
 ) {
+    var passwordVisible by remember { mutableStateOf(false) }
+
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
@@ -363,28 +367,51 @@ fun CustomInputField(
             )
         },
         leadingIcon = {
-            //iconbutton
             Icon(
                 icon,
                 contentDescription = null,
                 tint = MediumGray
             )
         },
-        trailingIcon = {
-            if (isPassword) {
-                Icon(
-                    painter = painterResource(R.drawable.visibility_icon),
-                    contentDescription = null,
-                    tint = MediumGray
-                )
-            }
-        },
+
         shape = RoundedCornerShape(12.dp),
-        colors = TextFieldDefaults.colors(
+        colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = White,
             unfocusedContainerColor = White,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
+            focusedBorderColor = MainGreen,
+            unfocusedBorderColor = LightGray
+        ),
+        visualTransformation = if (isPassword && !passwordVisible) {
+            PasswordVisualTransformation()
+        } else {
+            VisualTransformation.None
+        },
+        trailingIcon = {
+            if (isPassword) {
+                IconButton(
+                    onClick = { passwordVisible = !passwordVisible }
+                ) {
+                    Icon(
+                        painter = painterResource(
+                            id = if (passwordVisible) {
+                                R.drawable.visibility_icon
+                            } else {
+                                R.drawable.eyes_close_icon
+                            }
+                        ),
+                        contentDescription = null,
+                        tint = MediumGray
+                    )
+                }
+            }
+        },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = if (isPassword) {
+                KeyboardType.Password
+            } else {
+                KeyboardType.Text
+            },
+            imeAction = ImeAction.Next
         )
     )
 }
@@ -412,9 +439,12 @@ fun RegisterScreenPreview1() {
 @Composable
 fun RegisterScreenPreview2() {
     RegistrationContent2(
-        imageKey = "image_registration2",
+        uiState = RegistrationUiState(),
         onBackClick = {},
+        onEmailChange = {},
+        onPasswordChange = {},
+        onLoginClick = {},
         onSignUpClick = {},
-        onLoginClick = {}
+        imageKey = "image_registration2"
     )
 }
