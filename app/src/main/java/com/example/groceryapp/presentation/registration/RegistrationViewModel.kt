@@ -13,12 +13,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-sealed class RegistrationEvent{
-    object NavigateToHome : RegistrationEvent()
-    object NavigateToRegistration1 : RegistrationEvent()
-    object NavigateToRegistration2 : RegistrationEvent()
-    data class ShowError(val message: String) : RegistrationEvent()
-}
 
 @HiltViewModel
 class RegistrationViewModel @Inject constructor(
