@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.groceryapp.presentation.home.HomeScreen
+import com.example.groceryapp.presentation.onboarding.OnboardingEvent
 import com.example.groceryapp.presentation.onboarding.OnboardingScreen1
 import com.example.groceryapp.presentation.onboarding.OnboardingScreen2
 import com.example.groceryapp.presentation.onboarding.OnboardingViewModel
@@ -33,6 +34,22 @@ fun NavGraph() {
     val isOnboardingCompleted by onboardingViewModel.isOnboardingCompleted.collectAsState()
     val isAuthenticated by authViewModel.isAuthenticated.collectAsState()
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        onboardingViewModel.events.collect { event ->
+            when (event) {
+                is OnboardingEvent.NavigateToNext -> {
+                    navController.navigate(Screens.Splash2.route)
+                }
+
+                is OnboardingEvent.NavigateToRegistration -> {
+                    navController.navigate(Screens.RegistrationScreen1.route) {
+                        popUpTo(Screens.Splash1.route) { inclusive = true }
+                    }
+                }
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         registrationViewModel.events.collect { event ->
@@ -73,23 +90,10 @@ fun NavGraph() {
 
         ) {
             composable(Screens.Splash1.route) {
-                OnboardingScreen1(
-                    viewModel = onboardingViewModel,
-                    onFinish = {
-                        navController.navigate(Screens.Splash2.route)
-                    }
-                )
+                OnboardingScreen1(viewModel = onboardingViewModel)
             }
             composable(Screens.Splash2.route) {
-                OnboardingScreen2(
-                    viewModel = onboardingViewModel,
-                    onFinish = {
-                        onboardingViewModel.completedOnboardingSave()
-                        navController.navigate(Screens.RegistrationScreen1.route) {
-                            popUpTo(Screens.Splash1.route) { inclusive = true }
-                        }
-                    }
-                )
+                OnboardingScreen2(viewModel = onboardingViewModel)
             }
             composable(Screens.RegistrationScreen1.route) {
                 RegistrationScreen1(viewModel = registrationViewModel)

@@ -55,8 +55,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun OnboardingScreen2(
-    viewModel: OnboardingViewModel,
-    onFinish: () -> Unit
+    viewModel: OnboardingViewModel
 ) {
     val pages by viewModel.secondOnboardingPages.collectAsState()
 
@@ -64,7 +63,7 @@ fun OnboardingScreen2(
         pages = pages,
         layoutStyle = OnboardingLayoutStyle.DOME,
         finishButtonText = "Get started",
-        onFinish = onFinish
+        onFinish = { viewModel.onFinishClicked() }
     )
 }
 

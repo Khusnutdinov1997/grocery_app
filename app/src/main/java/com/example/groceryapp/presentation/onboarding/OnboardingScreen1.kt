@@ -34,16 +34,15 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun OnboardingScreen1(
-    viewModel: OnboardingViewModel,
-    onFinish: () -> Unit
+    viewModel: OnboardingViewModel
 ) {
     val pages by viewModel.firstOnboardingPages.collectAsState()
 
     OnboardingContent(
         pages = pages,
-       layoutStyle = OnboardingLayoutStyle.FULL_SCREEN,
+        layoutStyle = OnboardingLayoutStyle.FULL_SCREEN,
         finishButtonText = "Continue",
-        onFinish = onFinish
+        onFinish = { viewModel.onNextClicked() }
     )
 }
 
