@@ -48,12 +48,21 @@ class RegistrationViewModel @Inject constructor(
             )
         }
     }
+
     fun onNavigateToRegistration1() {
         viewModelScope.launch { _events.send(RegistrationEvent.NavigateToRegistration1) }
     }
 
     fun onNavigateToRegistration2() {
         viewModelScope.launch { _events.send(RegistrationEvent.NavigateToRegistration2) }
+    }
+
+    fun onNavigateToRegistration3() {
+        viewModelScope.launch { _events.send(RegistrationEvent.NavigateToRegistration3) }
+    }
+
+    fun onNavigateToHome() {
+        viewModelScope.launch { _events.send(RegistrationEvent.NavigateToHome) }
     }
 
     fun login() {

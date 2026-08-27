@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -72,7 +73,7 @@ fun RegistrationScreen1(
     RegistrationContent1(
         imageKey = "image_registration1",
         onFirebaseClick = { /* ... */ },
-        onSignUpClick = { viewModel.onNavigateToRegistration2() },
+        onSignUpClick = { viewModel.onNavigateToRegistration3() },
         onLoginClick = { viewModel.onNavigateToRegistration2() }
     )
 }
@@ -193,14 +194,6 @@ fun RegistrationScreen2(
     val context = LocalContext.current
 
 
-    LaunchedEffect(Unit) {
-        viewModel.events.collect { event ->
-            if (event is RegistrationEvent.ShowError) {
-                Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
     RegistrationContent2(
         uiState = uiState,
         imageKey = "image_registration2",
@@ -208,7 +201,7 @@ fun RegistrationScreen2(
         onEmailChange = viewModel::onEmailChanged,
         onPasswordChange = viewModel::onPasswordChanged,
         onLoginClick = viewModel::login,
-        onSignUpClick =  viewModel::onNavigateToRegistration1
+        onSignUpClick = viewModel::onNavigateToRegistration3
     )
 
 }
@@ -309,7 +302,13 @@ fun RegistrationContent2(
             )
 
             if (uiState.error != null) {
-                Text(text = uiState.error, color = Color.Red, fontSize = 14.sp, modifier = Modifier.padding(top = 8.dp), fontFamily = poppinsFontFamily)
+                Text(
+                    text = uiState.error,
+                    color = Color.Red,
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(top = 8.dp),
+                    fontFamily = poppinsFontFamily
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -324,17 +323,34 @@ fun RegistrationContent2(
                 shape = RoundedCornerShape(12.dp)
             ) {
                 if (uiState.isLoading) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = White, strokeWidth = 2.dp)
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = White,
+                        strokeWidth = 2.dp
+                    )
                 } else {
-                    Text(text = "Login", fontSize = 18.sp, fontWeight = FontWeight.Bold, fontFamily = poppinsFontFamily)
+                    Text(
+                        text = "Login",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = poppinsFontFamily
+                    )
                 }
             }
 
-            TextButton(modifier = Modifier.align(Alignment.CenterHorizontally), onClick = onSignUpClick) {
+            TextButton(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                onClick = onSignUpClick
+            ) {
                 Text(
                     text = buildAnnotatedString {
                         append("Don’t have an account? ")
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, color = DarkGray)) { append("Sign up") }
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.Bold,
+                                color = DarkGray
+                            )
+                        ) { append("Sign up") }
                     },
                     color = MediumGray,
                     fontFamily = poppinsFontFamily
@@ -417,8 +433,176 @@ fun CustomInputField(
 }
 
 @Composable
-fun RegistrationScreen3() {
+fun RegistrationScreen3(
+    viewModel: RegistrationViewModel
+) {
+    val uiState by viewModel.authState.collectAsState()
+    val context = LocalContext.current
 
+    RegistrationContent3(
+        uiState = uiState,
+        imageKey = "image_registration3",
+        onBackClick = viewModel::onNavigateToRegistration2,
+        onEmailChange = viewModel::onEmailChanged,
+        onPasswordChange = viewModel::onPasswordChanged,
+        onPhoneChange = viewModel::onPhoneChanged,
+        onSignUpClick = viewModel::signUp,
+        onLoginClick = viewModel::onNavigateToRegistration2
+    )
+}
+
+@Composable
+fun RegistrationContent3(
+    uiState: RegistrationUiState,
+    imageKey: String,
+    onBackClick: () -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onPhoneChange: (String) -> Unit,
+    onSignUpClick: () -> Unit,
+    onLoginClick: () -> Unit
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Image(
+            painter = painterResource(id = RegistrationScreenMapper.toDrawableRes(imageKey)),
+            contentDescription = null,
+            modifier = Modifier.fillMaxHeight(0.60f),
+            contentScale = ContentScale.Crop
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .systemBarsPadding()
+                .padding(top = 20.dp, start = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onBackClick) {
+                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null, tint = White)
+            }
+            Spacer(modifier = Modifier.weight(0.3f))
+            Text(
+                text = "Sign Up",
+                color = White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+                fontFamily = poppinsFontFamily
+            )
+            Spacer(modifier = Modifier.weight(1f))
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.53f)
+                .align(Alignment.BottomCenter)
+                .background(
+                    color = LightGray,
+                    shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
+                )
+                .padding(24.dp)
+        ) {
+            Text(
+                text = "Create account",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                color = DarkGray,
+                fontFamily = poppinsFontFamily
+            )
+            Text(
+                text = "Quickly create account",
+                color = MediumGray,
+                fontSize = 15.sp,
+                fontFamily = poppinsFontFamily
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            CustomInputField(
+                value = uiState.email,
+                onValueChange = onEmailChange,
+                label = "Email Address",
+                icon = Icons.Default.Email
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            CustomInputField(
+                value = uiState.phoneNumber,
+                onValueChange = onPhoneChange,
+                label = "Phone Number",
+                icon = Icons.Filled.Phone
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            CustomInputField(
+                value = uiState.password,
+                onValueChange = onPasswordChange,
+                label = "Password",
+                icon = Icons.Default.Lock,
+                isPassword = true
+            )
+
+            if (uiState.error != null) {
+                Text(
+                    text = uiState.error,
+                    color = Color.Red,
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(top = 8.dp),
+                    fontFamily = poppinsFontFamily
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = onSignUpClick,
+                enabled = !uiState.isLoading,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = MainGreen),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(
+                        color = White,
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text(
+                        "Sign Up",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = poppinsFontFamily
+                    )
+                }
+            }
+
+            TextButton(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                onClick = onLoginClick
+            ) {
+                Text(
+                    text = buildAnnotatedString {
+                        append("Already have an account? ")
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.Bold,
+                                color = DarkGray
+                            )
+                        ) {
+                            append("Login")
+                        }
+                    },
+                    color = MediumGray,
+                    fontFamily = poppinsFontFamily
+                )
+            }
+        }
+    }
 }
 
 @Preview(
@@ -446,5 +630,20 @@ fun RegisterScreenPreview2() {
         onLoginClick = {},
         onSignUpClick = {},
         imageKey = "image_registration2"
+    )
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun RegistrationScreenPreview3() {
+    RegistrationContent3(
+        uiState = RegistrationUiState(),
+        imageKey = "image_registration3",
+        onBackClick = {},
+        onLoginClick = {},
+        onSignUpClick = {},
+        onPasswordChange = {},
+        onEmailChange = {},
+        onPhoneChange = {}
     )
 }

@@ -33,6 +33,10 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getCurrentUser(): User?{
+        return firebaseAuth.currentUser?.toDomainUser()
+    }
+
     override fun logout() {
         firebaseAuth.signOut()
     }
