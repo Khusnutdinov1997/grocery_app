@@ -6,9 +6,11 @@ import com.example.groceryapp.domain.model.OnboardingPage
 import com.example.groceryapp.domain.repository.OnboardingRepository
 import com.example.groceryapp.utils.DataStoreManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,6 +27,9 @@ class OnboardingViewModel @Inject constructor(
 
     private val _isOnboardingCompleted = MutableStateFlow<Boolean?>(null)
     val isOnboardingCompleted = _isOnboardingCompleted.asStateFlow()
+
+    private val _events = Channel<OnboardingEvent>()
+    val events = _events.receiveAsFlow()
 
     init {
         loadsPages()
@@ -46,6 +51,19 @@ class OnboardingViewModel @Inject constructor(
         viewModelScope.launch {
             repository.saveOnboardingCompleted(true)
             _isOnboardingCompleted.value = true
+        }
+    }
+
+    fun onNextClicked(){
+        viewModelScope.launch {
+            _events.send(OnboardingEvent.NavigateToNext)
+        }
+    }
+
+    fun onFinishClicked(){
+        viewModelScope.launch {
+            completedOnboardingSave()
+            _events.send(OnboardingEvent.NavigateToRegistration)
         }
     }
 }
