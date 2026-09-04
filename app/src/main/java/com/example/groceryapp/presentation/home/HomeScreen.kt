@@ -80,15 +80,16 @@ fun HomeScreen(
         Category("Grocery", Color(0xFFF3E5F5), R.drawable.grocery_icon),
         Category("Edible oil", Color(0xFFE1F5FE), R.drawable.edible_oil_icon),
         Category("Household", Color(0xFFFCE4EC), R.drawable.household_icon),
+        Category("Babe" , Color(0xFFD2EFFF), R.drawable.baby_icon)
     )
 
     val products = listOf(
-        Product("Fresh Peach", "$8.00", "dozen", R.drawable.image_screen1),
-        Product("Avocoda", "$7.00", "2.0 lbs", R.drawable.image_screen2, isNew = true),
-        Product("Pineapple", "$9.90", "1.50 lbs", R.drawable.image_screen3, isFavorite = true),
-        Product("Black Grapes", "$7.05", "5.0 lbs", R.drawable.image_screen4, discount = "-10%"),
-        Product("Pomegranate", "$2.09", "1.50 lbs", R.drawable.image_screen5, isNew = true),
-        Product("Fresh Broccoli", "$3.00", "1 kg", R.drawable.image_screen6)
+        Product("Fresh Peach", "$8.00", "dozen", R.drawable.peach),
+        Product("Avocoda", "$7.00", "2.0 lbs", R.drawable.avacoda, isNew = true),
+        Product("Pineapple", "$9.90", "1.50 lbs", R.drawable.pineapple, isFavorite = true),
+        Product("Black Grapes", "$7.05", "5.0 lbs", R.drawable.grapes, discount = "-10%"),
+        Product("Pomegranate", "$2.09", "1.50 lbs", R.drawable.pomegranate, isNew = true),
+        Product("Fresh Broccoli", "$3.00", "1 kg", R.drawable.broccoli)
     )
 
     Scaffold(
@@ -199,7 +200,9 @@ fun PromoBanner() {
                             .size(if (index == 0) 12.dp else 6.dp, 6.dp)
                             .clip(CircleShape)
                             .background(if (index == 0) Color(0xFF7CB342) else Color.LightGray)
-                    ) { }
+                    ) {
+
+                    }
                 }
             }
         }
