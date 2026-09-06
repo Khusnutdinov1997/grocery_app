@@ -16,6 +16,7 @@ import com.example.groceryapp.presentation.onboarding.OnboardingEvent
 import com.example.groceryapp.presentation.onboarding.OnboardingScreen1
 import com.example.groceryapp.presentation.onboarding.OnboardingScreen2
 import com.example.groceryapp.presentation.onboarding.OnboardingViewModel
+import com.example.groceryapp.presentation.registration.AuthEvent
 import com.example.groceryapp.presentation.registration.AuthViewModel
 import com.example.groceryapp.presentation.registration.RegistrationEvent
 import com.example.groceryapp.presentation.registration.RegistrationScreen1
@@ -33,6 +34,7 @@ fun NavGraph() {
 
     val isOnboardingCompleted by onboardingViewModel.isOnboardingCompleted.collectAsState()
     val isAuthenticated by authViewModel.isAuthenticated.collectAsState()
+    val openLoginScreen by authViewModel.openLoginScreen.collectAsState()
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
@@ -44,7 +46,21 @@ fun NavGraph() {
 
                 is OnboardingEvent.NavigateToRegistration -> {
                     navController.navigate(Screens.RegistrationScreen1.route) {
-                        popUpTo(Screens.Splash1.route) { inclusive = true }
+                        popUpTo(Screens.Splash1.route) { inclusive = true } // полная очистка back stack
+                    }
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        authViewModel.event.collect { event ->
+            when (event) {
+                is AuthEvent.NavigateToLogin -> {
+                    registrationViewModel.resetFrom()
+                    navController.navigate(Screens.RegistrationScreen2.route){
+                        popUpTo(navController.graph.id){inclusive = true} // полная очистка back stack
+                        launchSingleTop = true // не дублировать экран в стеке
                     }
                 }
             }
@@ -55,8 +71,10 @@ fun NavGraph() {
         registrationViewModel.events.collect { event ->
             when (event) {
                 is RegistrationEvent.NavigateToHome -> {
+                    authViewModel.onAuthSuccess()
                     navController.navigate(Screens.Home.route) {
-                        popUpTo(0) { inclusive = true }
+                        popUpTo(0) { inclusive = true } // полная очистка back stack
+                        launchSingleTop = true  // не дублировать экран в стеке
                     }
                 }
 
@@ -84,8 +102,9 @@ fun NavGraph() {
             navController = navController,
             startDestination = when {
                 isOnboardingCompleted == false -> Screens.Splash1.route
-                isAuthenticated == false -> Screens.RegistrationScreen1.route
-                else -> Screens.Home.route
+                isAuthenticated == false -> Screens.Home.route
+                openLoginScreen -> Screens.RegistrationScreen2.route
+                else -> Screens.RegistrationScreen1.route
             }
 
         ) {
@@ -106,12 +125,7 @@ fun NavGraph() {
             }
             composable(Screens.Home.route) {
                 HomeScreen(
-                    onLogout = { authViewModel.logout() },
-                    toRegisterScreen = {
-                        navController.navigate(Screens.RegistrationScreen2.route) {
-                            popUpTo(0) { inclusive = true }
-                        }
-                    }
+                    onLogout = authViewModel::logout
                 )
             }
         }

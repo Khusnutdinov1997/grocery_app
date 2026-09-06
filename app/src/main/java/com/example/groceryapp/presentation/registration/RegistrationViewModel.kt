@@ -99,4 +99,8 @@ class RegistrationViewModel @Inject constructor(
         }
     }
 
+    fun resetFrom() {
+        _authState.value = RegistrationUiState()
+    }
+
 }
