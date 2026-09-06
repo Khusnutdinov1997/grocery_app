@@ -102,7 +102,7 @@ fun NavGraph() {
             navController = navController,
             startDestination = when {
                 isOnboardingCompleted == false -> Screens.Splash1.route
-                isAuthenticated == false -> Screens.Home.route
+                isAuthenticated == true -> Screens.Home.route
                 openLoginScreen -> Screens.RegistrationScreen2.route
                 else -> Screens.RegistrationScreen1.route
             }

@@ -1,5 +1,6 @@
 package com.example.groceryapp.presentation.registration
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.groceryapp.domain.repository.AuthRepository
@@ -31,6 +32,7 @@ class AuthViewModel @Inject constructor(
     private fun checkUserSession(){
         val currentUser = authRepository.getCurrentUser()
         _isAuthenticated.value = currentUser != null
+         Log.d("AUTH_DEBAG", "User is logged in: ${currentUser != null}")
     }
 
     fun onAuthSuccess(){
