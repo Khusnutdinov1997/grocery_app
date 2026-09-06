@@ -12,8 +12,7 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun HomeScreen(
-    onLogout: () -> Unit,
-    toRegisterScreen: () -> Unit
+    onLogout: () -> Unit
 ){
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -21,12 +20,12 @@ fun HomeScreen(
     ){
         Column(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(
                 onClick = {
                     onLogout()
-                    toRegisterScreen()
                 }
 
             ) {
