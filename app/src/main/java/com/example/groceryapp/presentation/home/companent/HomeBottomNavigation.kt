@@ -37,7 +37,7 @@ fun HomeBottomNavigation() {
             IconButton(
                 onClick = { /* TODO */ },
                 modifier = Modifier.constrainAs(home) {
-                    start.linkTo(parent.start, margin = 24.dp)
+                    start.linkTo(parent.start, margin = 40.dp)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
                 }
@@ -53,7 +53,7 @@ fun HomeBottomNavigation() {
             IconButton(
                 onClick = { /* TODO */ },
                 modifier = Modifier.constrainAs(profile) {
-                    start.linkTo(home.end)
+                    start.linkTo(home.end, margin = 10.dp)
                     end.linkTo(favorites.start)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
@@ -71,7 +71,8 @@ fun HomeBottomNavigation() {
                 onClick = { /* TODO */ },
                 modifier = Modifier.constrainAs(favorites) {
                     start.linkTo(profile.end)
-                    end.linkTo(parent.end, margin = 80.dp) // Оставляем место под FAB справа
+                    // Увеличили отступ с 80.dp до 110.dp, чтобы сместить кнопку левее
+                    end.linkTo(parent.end, margin = 95.dp)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
                 }
