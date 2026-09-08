@@ -74,7 +74,7 @@ fun HomeScreen(
         Category("Grocery", Color(0xFFF3E5F5), R.drawable.grocery_icon),
         Category("Edible oil", Color(0xFFE1F5FE), R.drawable.edible_oil_icon),
         Category("Household", Color(0xFFFCE4EC), R.drawable.household_icon),
-        Category("Babe", Color(0xFFD2EFFF), R.drawable.baby_icon)
+        Category("Baby", Color(0xFFD2EFFF), R.drawable.baby_icon)
     )
 
     val products = listOf(
@@ -95,7 +95,7 @@ fun HomeScreen(
                 shape = CircleShape,
                 modifier = Modifier
                     .size(64.dp)
-                    .offset(y = 45.dp) // Вот этот оффсет заставит кнопку «врезаться» в бар
+                    .offset(y = 45.dp, x = -25.dp) // Вот этот оффсет заставит кнопку «врезаться» в бар
                     .shadow(8.dp, CircleShape)
             ) {
                 Icon(
