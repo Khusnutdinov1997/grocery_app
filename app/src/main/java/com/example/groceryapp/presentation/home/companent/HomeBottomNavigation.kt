@@ -45,7 +45,7 @@ fun HomeBottomNavigation() {
                 Icon(
                     painter = painterResource(R.drawable.home_icon),
                     contentDescription = null,
-                    tint = Color(0xFF7CB342),
+                    tint = Color.LightGray,
                     modifier = Modifier.size(28.dp)
                 )
             }

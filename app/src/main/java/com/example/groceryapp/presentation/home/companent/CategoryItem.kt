@@ -1,6 +1,7 @@
 package com.example.groceryapp.presentation.home.companent
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,23 +21,28 @@ import androidx.compose.ui.unit.sp
 import com.example.groceryapp.domain.model.Category
 
 @Composable
-fun CategoryItem(category: Category) {
+fun CategoryItem(
+    category: Category,
+    onClick: (Category)-> Unit
+) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
             modifier = Modifier
                 .size(60.dp)
                 .clip(CircleShape)
-                .background(category.color),
+                .clickable{onClick(category)}
+                .background(category.colorBG),
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                painter = painterResource(id = category.icon),
+                painter = painterResource(id = category.iconResId),
                 contentDescription = null,
                 tint = Color.Unspecified,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier
+                    .size(32.dp)
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Text(text = category.name, fontSize = 12.sp, color = Color.Gray)
+        Text(text = category.nameCategory, fontSize = 12.sp, color = Color.Gray)
     }
 }

@@ -23,24 +23,24 @@ class AuthViewModel @Inject constructor(
     val openLoginScreen = _openLoginScreen.asStateFlow()
 
     private val _event = Channel<AuthEvent>()
-    val event= _event.receiveAsFlow()
+    val event = _event.receiveAsFlow()
 
-    init{
+    init {
         checkUserSession()
     }
 
-    private fun checkUserSession(){
+    private fun checkUserSession() {
         val currentUser = authRepository.getCurrentUser()
         _isAuthenticated.value = currentUser != null
-         Log.d("AUTH_DEBAG", "User is logged in: ${currentUser != null}")
+        Log.d("AUTH_DEBAG", "User is logged in: ${currentUser != null}")
     }
 
-    fun onAuthSuccess(){
+    fun onAuthSuccess() {
         _isAuthenticated.value = true
         _openLoginScreen.value = false
     }
 
-    fun logout(){
+    fun logout() {
         authRepository.logout()
         _isAuthenticated.value = false
         _openLoginScreen.value = true

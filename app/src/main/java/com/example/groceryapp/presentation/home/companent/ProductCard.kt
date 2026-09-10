@@ -37,7 +37,12 @@ import com.example.groceryapp.R
 import com.example.groceryapp.domain.model.Product
 
 @Composable
-fun ProductCard(product: Product, modifier: Modifier = Modifier) {
+fun ProductCard(
+    product: Product,
+    modifier: Modifier = Modifier,
+    onFavoriteClick: (Product) -> Unit,
+    onAddToCartClick: (Product) -> Unit
+) {
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
@@ -50,7 +55,7 @@ fun ProductCard(product: Product, modifier: Modifier = Modifier) {
                     text = "NEW",
                     modifier = Modifier
                         .padding(8.dp)
-                        .background(Color(0xFFFFF3E0), RoundedCornerShape(4.dec()))
+                        .background(Color(0xFFFFF3E0), RoundedCornerShape(4.dp))
                         .padding(horizontal = 6.dp, vertical = 2.dp),
                     fontSize = 10.sp,
                     color = Color(0xFFFF9800)

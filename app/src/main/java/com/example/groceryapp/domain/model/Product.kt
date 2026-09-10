@@ -1,6 +1,7 @@
 package com.example.groceryapp.domain.model
 
 data class Product(
+    val id: Int,
     val name: String,
     val price: String,
     val unit: String,
