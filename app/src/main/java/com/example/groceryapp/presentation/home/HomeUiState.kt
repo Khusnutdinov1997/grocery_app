@@ -7,6 +7,6 @@ data class HomeUiState(
     val searchQuery: String = "",
     val categoryList: List<Category> = Category.entries,
     val products: List<Product> = emptyList(),
-    val isLoading: Boolean = false,
+    val isLoading: Boolean = true,
     val errorMessage: String? = null
 )

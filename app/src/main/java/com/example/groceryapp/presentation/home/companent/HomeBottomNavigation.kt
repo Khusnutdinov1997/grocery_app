@@ -37,7 +37,8 @@ fun HomeBottomNavigation() {
             IconButton(
                 onClick = { /* TODO */ },
                 modifier = Modifier.constrainAs(home) {
-                    start.linkTo(parent.start, margin = 40.dp)
+                    start
+                        .linkTo(parent.start, margin = 40.dp)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
                 }

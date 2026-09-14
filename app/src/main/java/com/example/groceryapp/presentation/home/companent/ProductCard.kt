@@ -3,26 +3,13 @@ package com.example.groceryapp.presentation.home.companent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.groceryapp.R
 import com.example.groceryapp.domain.model.Product
+import com.example.groceryapp.presentation.home.ProductImageMapper
 
 @Composable
 fun ProductCard(
@@ -61,9 +49,10 @@ fun ProductCard(
                     color = Color(0xFFFF9800)
                 )
             }
-            if (product.discount != null) {
+
+            product.discountPercent?.let { percent ->
                 Text(
-                    text = product.discount,
+                    text = "-$percent%",
                     modifier = Modifier
                         .padding(8.dp)
                         .background(Color(0xFFFFEBEE), RoundedCornerShape(4.dp))
@@ -74,11 +63,11 @@ fun ProductCard(
             }
 
             IconButton(
-                onClick = { TODO() },
+                onClick = { onFavoriteClick(product) },
                 modifier = Modifier.align(Alignment.TopEnd)
             ) {
                 Icon(
-                    if (product.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                    imageVector = if (product.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                     contentDescription = null,
                     tint = if (product.isFavorite) Color.Red else Color.LightGray
                 )
@@ -98,7 +87,7 @@ fun ProductCard(
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
-                        painter = painterResource(id = product.image),
+                        painter = painterResource(id = ProductImageMapper.imageKeyToRes(product.imageUrl)),
                         contentDescription = null,
                         modifier = Modifier.size(70.dp),
                         contentScale = ContentScale.Fit
@@ -106,25 +95,31 @@ fun ProductCard(
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = product.price, color = Color(0xFF7CB342), fontWeight = FontWeight.Bold)
+                Text(
+                    text = "$${product.price}",
+                    color = Color(0xFF7CB342),
+                    fontWeight = FontWeight.Bold
+                )
                 Text(text = product.name, fontWeight = FontWeight.Medium)
                 Text(text = product.unit, fontSize = 12.sp, color = Color.Gray)
 
                 Spacer(modifier = Modifier.height(12.dp))
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable {}
+                    modifier = Modifier.clickable { onAddToCartClick(product) }
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.basket_icon),
                         contentDescription = null,
-                        modifier = Modifier.size(16.dp), tint = Color(0xFF7CB342)
+                        modifier = Modifier.size(16.dp),
+                        tint = Color(0xFF7CB342)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        "Add to cart", fontSize = 12.sp,
+                        text = "Add to cart",
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }

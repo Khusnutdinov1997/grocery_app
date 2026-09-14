@@ -20,8 +20,8 @@ fun SearchBar(
     onQueryChange: (String) -> Unit
 ) {
     OutlinedTextField(
-        value = "",
-        onValueChange = {},
+        value = query,
+        onValueChange = onQueryChange,
         modifier = Modifier.fillMaxWidth(),
         placeholder = { Text("Search keywords..", color = Color.Gray) },
         leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },

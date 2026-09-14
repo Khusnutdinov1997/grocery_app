@@ -11,12 +11,15 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
@@ -42,7 +45,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -53,7 +55,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.groceryapp.R
@@ -70,9 +71,15 @@ fun RegistrationScreen1(
 ) {
     RegistrationContent1(
         imageKey = "image_registration1",
-        onFirebaseClick = { /* ... */ },
-        onSignUpClick = { viewModel.onNavigateToRegistration3() },
-        onLoginClick = { viewModel.onNavigateToRegistration2() }
+        onFirebaseClick = { /* Google Auth Callback */ },
+        onSignUpClick = {
+            viewModel.resetForm()
+            viewModel.onNavigateToRegistration3()
+        },
+        onLoginClick = {
+            viewModel.resetForm()
+            viewModel.onNavigateToRegistration2()
+        }
     )
 }
 
@@ -87,98 +94,112 @@ fun RegistrationContent1(
         Image(
             painter = painterResource(id = RegistrationScreenMapper.toDrawableRes(imageKey)),
             contentDescription = null,
-            modifier = Modifier
-                .fillMaxHeight(0.65f),
+            modifier = Modifier.fillMaxHeight(0.55f),
             contentScale = ContentScale.Crop
         )
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.40f)
                 .align(Alignment.BottomCenter)
                 .background(
                     color = LightGray,
-                    RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
+                    shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
                 )
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(horizontal = 24.dp, vertical = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = "Welcome",
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = DarkGray,
-                fontFamily = poppinsFontFamily
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy",
-                textAlign = TextAlign.Center,
-                color = MediumGray,
-                fontSize = 15.sp,
-                fontFamily = poppinsFontFamily
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Button(
-                onClick = onFirebaseClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(12.dp),
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = White)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.logo),
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(Modifier.width(12.dp))
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "Continue with firebase",
+                    text = "Welcome",
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Bold,
                     color = DarkGray,
                     fontFamily = poppinsFontFamily
                 )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Button(
-                onClick = onSignUpClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MainGreen),
-                shape = RoundedCornerShape(12.dp),
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.user_icon),
-                    contentDescription = null
-                )
-                Spacer(Modifier.width(12.dp))
+                Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Create an account",
-                    fontFamily = poppinsFontFamily
-                )
-            }
-
-            TextButton(
-                onClick = onLoginClick
-            ) {
-                Text(
-                    text = buildAnnotatedString {
-                        append("Already have an account? ")
-                        withStyle(
-                            style = SpanStyle(fontWeight = FontWeight.Bold, color = DarkGray)
-                        ) {
-                            append("Login")
-                        }
-                    },
+                    text = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy",
+                    textAlign = TextAlign.Center,
                     color = MediumGray,
-                    fontFamily = poppinsFontFamily
+                    fontSize = 14.sp,
+                    fontFamily = poppinsFontFamily,
+                    lineHeight = 20.sp
                 )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Button(
+                    onClick = onFirebaseClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = White)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Text(
+                        text = "Continue with firebase",
+                        color = DarkGray,
+                        fontFamily = poppinsFontFamily,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Button(
+                    onClick = onSignUpClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MainGreen),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.user_icon),
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Text(
+                        text = "Create an account",
+                        fontFamily = poppinsFontFamily,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+
+                TextButton(
+                    onClick = onLoginClick,
+                    modifier = Modifier.padding(top = 4.dp)
+                ) {
+                    Text(
+                        text = buildAnnotatedString {
+                            append("Already have an account? ")
+                            withStyle(
+                                style = SpanStyle(fontWeight = FontWeight.Bold, color = DarkGray)
+                            ) {
+                                append("Login")
+                            }
+                        },
+                        color = MediumGray,
+                        fontFamily = poppinsFontFamily,
+                        fontSize = 14.sp
+                    )
+                }
             }
         }
     }
@@ -189,8 +210,6 @@ fun RegistrationScreen2(
     viewModel: RegistrationViewModel,
 ) {
     val uiState by viewModel.authState.collectAsState()
-    val context = LocalContext.current
-
 
     RegistrationContent2(
         uiState = uiState,
@@ -201,7 +220,6 @@ fun RegistrationScreen2(
         onLoginClick = viewModel::login,
         onSignUpClick = viewModel::onNavigateToRegistration3
     )
-
 }
 
 @Composable
@@ -214,14 +232,11 @@ fun RegistrationContent2(
     onLoginClick: () -> Unit,
     onSignUpClick: () -> Unit
 ) {
-
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = RegistrationScreenMapper.toDrawableRes(imageKey)),
             contentDescription = null,
-            modifier = Modifier
-
-                .fillMaxHeight(0.60f),
+            modifier = Modifier.fillMaxHeight(0.55f),
             contentScale = ContentScale.Crop
         )
 
@@ -230,19 +245,16 @@ fun RegistrationContent2(
                 .fillMaxWidth()
                 .systemBarsPadding()
                 .padding(top = 20.dp, start = 16.dp),
-            horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(
-                onClick = onBackClick
-            ) {
+            IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = White
                 )
             }
             Spacer(modifier = Modifier.weight(0.3f))
-
             Text(
                 text = "Welcome",
                 color = White,
@@ -257,12 +269,13 @@ fun RegistrationContent2(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.5f)
                 .align(Alignment.BottomCenter)
+                .imePadding()
                 .background(
                     color = LightGray,
-                    RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
+                    shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
                 )
+                .verticalScroll(rememberScrollState())
                 .padding(24.dp)
         ) {
             Text(
@@ -272,21 +285,21 @@ fun RegistrationContent2(
                 color = DarkGray,
                 fontFamily = poppinsFontFamily
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = "Sign in to your account",
-                textAlign = TextAlign.Center,
                 color = MediumGray,
                 fontSize = 15.sp,
                 fontFamily = poppinsFontFamily
             )
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             CustomInputField(
                 value = uiState.email,
                 onValueChange = onEmailChange,
                 label = "Email Address",
-                icon = Icons.Default.Email
+                icon = Icons.Default.Email,
+                keyboardType = KeyboardType.Email
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -344,10 +357,7 @@ fun RegistrationContent2(
                     text = buildAnnotatedString {
                         append("Don’t have an account? ")
                         withStyle(
-                            style = SpanStyle(
-                                fontWeight = FontWeight.Bold,
-                                color = DarkGray
-                            )
+                            style = SpanStyle(fontWeight = FontWeight.Bold, color = DarkGray)
                         ) { append("Sign up") }
                     },
                     color = MediumGray,
@@ -364,30 +374,19 @@ fun CustomInputField(
     onValueChange: (String) -> Unit,
     label: String,
     icon: ImageVector,
-    isPassword: Boolean = false
+    isPassword: Boolean = false,
+    keyboardType: KeyboardType = KeyboardType.Text
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
 
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         singleLine = true,
         maxLines = 1,
-        placeholder = {
-            Text(
-                label, color = MediumGray
-            )
-        },
-        leadingIcon = {
-            Icon(
-                icon,
-                contentDescription = null,
-                tint = MediumGray
-            )
-        },
-
+        placeholder = { Text(label, color = MediumGray) },
+        leadingIcon = { Icon(icon, contentDescription = null, tint = MediumGray) },
         shape = RoundedCornerShape(12.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = White,
@@ -395,23 +394,13 @@ fun CustomInputField(
             focusedBorderColor = MainGreen,
             unfocusedBorderColor = LightGray
         ),
-        visualTransformation = if (isPassword && !passwordVisible) {
-            PasswordVisualTransformation()
-        } else {
-            VisualTransformation.None
-        },
+        visualTransformation = if (isPassword && !passwordVisible) PasswordVisualTransformation() else VisualTransformation.None,
         trailingIcon = {
             if (isPassword) {
-                IconButton(
-                    onClick = { passwordVisible = !passwordVisible }
-                ) {
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
                     Icon(
                         painter = painterResource(
-                            id = if (passwordVisible) {
-                                R.drawable.visibility_icon
-                            } else {
-                                R.drawable.eyes_close_icon
-                            }
+                            id = if (passwordVisible) R.drawable.visibility_icon else R.drawable.eyes_close_icon
                         ),
                         contentDescription = null,
                         tint = MediumGray
@@ -420,11 +409,7 @@ fun CustomInputField(
             }
         },
         keyboardOptions = KeyboardOptions(
-            keyboardType = if (isPassword) {
-                KeyboardType.Password
-            } else {
-                KeyboardType.Text
-            },
+            keyboardType = if (isPassword) KeyboardType.Password else keyboardType,
             imeAction = ImeAction.Next
         )
     )
@@ -435,7 +420,6 @@ fun RegistrationScreen3(
     viewModel: RegistrationViewModel
 ) {
     val uiState by viewModel.authState.collectAsState()
-    val context = LocalContext.current
 
     RegistrationContent3(
         uiState = uiState,
@@ -464,7 +448,7 @@ fun RegistrationContent3(
         Image(
             painter = painterResource(id = RegistrationScreenMapper.toDrawableRes(imageKey)),
             contentDescription = null,
-            modifier = Modifier.fillMaxHeight(0.60f),
+            modifier = Modifier.fillMaxHeight(0.55f),
             contentScale = ContentScale.Crop
         )
 
@@ -492,12 +476,13 @@ fun RegistrationContent3(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.53f)
                 .align(Alignment.BottomCenter)
+                .imePadding()
                 .background(
                     color = LightGray,
                     shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
                 )
+                .verticalScroll(rememberScrollState())
                 .padding(24.dp)
         ) {
             Text(
@@ -514,13 +499,14 @@ fun RegistrationContent3(
                 fontFamily = poppinsFontFamily
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             CustomInputField(
                 value = uiState.email,
                 onValueChange = onEmailChange,
                 label = "Email Address",
-                icon = Icons.Default.Email
+                icon = Icons.Default.Email,
+                keyboardType = KeyboardType.Email
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -529,7 +515,8 @@ fun RegistrationContent3(
                 value = uiState.phoneNumber,
                 onValueChange = onPhoneChange,
                 label = "Phone Number",
-                icon = Icons.Filled.Phone
+                icon = Icons.Filled.Phone,
+                keyboardType = KeyboardType.Phone
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -552,7 +539,7 @@ fun RegistrationContent3(
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             Button(
                 onClick = onSignUpClick,
@@ -587,13 +574,8 @@ fun RegistrationContent3(
                     text = buildAnnotatedString {
                         append("Already have an account? ")
                         withStyle(
-                            style = SpanStyle(
-                                fontWeight = FontWeight.Bold,
-                                color = DarkGray
-                            )
-                        ) {
-                            append("Login")
-                        }
+                            style = SpanStyle(fontWeight = FontWeight.Bold, color = DarkGray)
+                        ) { append("Login") }
                     },
                     color = MediumGray,
                     fontFamily = poppinsFontFamily
@@ -601,47 +583,4 @@ fun RegistrationContent3(
             }
         }
     }
-}
-
-@Preview(
-    showBackground = true,
-    showSystemUi = true
-)
-@Composable
-fun RegisterScreenPreview1() {
-    RegistrationContent1(
-        imageKey = "image_registration1",
-        onFirebaseClick = {},
-        onSignUpClick = {},
-        onLoginClick = {}
-    )
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun RegisterScreenPreview2() {
-    RegistrationContent2(
-        uiState = RegistrationUiState(),
-        onBackClick = {},
-        onEmailChange = {},
-        onPasswordChange = {},
-        onLoginClick = {},
-        onSignUpClick = {},
-        imageKey = "image_registration2"
-    )
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun RegistrationScreenPreview3() {
-    RegistrationContent3(
-        uiState = RegistrationUiState(),
-        imageKey = "image_registration3",
-        onBackClick = {},
-        onLoginClick = {},
-        onSignUpClick = {},
-        onPasswordChange = {},
-        onEmailChange = {},
-        onPhoneChange = {}
-    )
 }

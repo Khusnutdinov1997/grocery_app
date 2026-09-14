@@ -77,7 +77,7 @@ class RegistrationViewModel @Inject constructor(
             }.onFailure { e ->
                 val msg = e.message ?: "Unknown error"
                 _authState.update { s -> s.copy(error = msg) }
-                _events.send(RegistrationEvent.ShowError(msg))
+                _events.send(RegistrationEvent.ShowMessage(msg))
             }
         }
     }
@@ -94,12 +94,12 @@ class RegistrationViewModel @Inject constructor(
             }.onFailure { e ->
                 val msg = e.message ?: "Unknown error"
                 _authState.update { it.copy(error = msg) }
-                _events.send(RegistrationEvent.ShowError(msg))
+                _events.send(RegistrationEvent.ShowMessage(msg))
             }
         }
     }
 
-    fun resetFrom() {
+    fun resetForm() {
         _authState.value = RegistrationUiState()
     }
 
