@@ -1,12 +1,17 @@
 package com.example.groceryapp.presentation.navigate
 
-import android.widget.Toast
-import android.widget.Toast.makeText
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -28,6 +33,7 @@ import com.example.groceryapp.utils.Screens
 @Composable
 fun NavGraph() {
     val navController = rememberNavController()
+    val snackBarHostState = remember { SnackbarHostState() }
     val registrationViewModel: RegistrationViewModel = hiltViewModel()
     val onboardingViewModel: OnboardingViewModel = hiltViewModel()
     val authViewModel: AuthViewModel = hiltViewModel()
@@ -35,7 +41,6 @@ fun NavGraph() {
     val isOnboardingCompleted by onboardingViewModel.isOnboardingCompleted.collectAsState()
     val isAuthenticated by authViewModel.isAuthenticated.collectAsState()
     val openLoginScreen by authViewModel.openLoginScreen.collectAsState()
-    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         onboardingViewModel.events.collect { event ->
@@ -46,7 +51,8 @@ fun NavGraph() {
 
                 is OnboardingEvent.NavigateToRegistration -> {
                     navController.navigate(Screens.RegistrationScreen1.route) {
-                        popUpTo(Screens.Splash1.route) { inclusive = true } // полная очистка back stack
+                        popUpTo(Screens.Splash1.route) { inclusive = true }
+                        launchSingleTop = true
                     }
                 }
             }
@@ -57,10 +63,10 @@ fun NavGraph() {
         authViewModel.event.collect { event ->
             when (event) {
                 is AuthEvent.NavigateToLogin -> {
-                    registrationViewModel.resetFrom()
-                    navController.navigate(Screens.RegistrationScreen2.route){
-                        popUpTo(navController.graph.id){inclusive = true} // полная очистка back stack
-                        launchSingleTop = true // не дублировать экран в стеке
+                    registrationViewModel.resetForm()
+                    navController.navigate(Screens.RegistrationScreen2.route) {
+                        popUpTo(Screens.Home.route) { inclusive = true }
+                        launchSingleTop = true
                     }
                 }
             }
@@ -73,8 +79,8 @@ fun NavGraph() {
                 is RegistrationEvent.NavigateToHome -> {
                     authViewModel.onAuthSuccess()
                     navController.navigate(Screens.Home.route) {
-                        popUpTo(0) { inclusive = true } // полная очистка back stack
-                        launchSingleTop = true  // не дублировать экран в стеке
+                        popUpTo(Screens.RegistrationScreen1.route) { inclusive = true }
+                        launchSingleTop = true
                     }
                 }
 
@@ -90,23 +96,32 @@ fun NavGraph() {
                     navController.navigate(Screens.RegistrationScreen3.route)
                 }
 
-                is RegistrationEvent.ShowError -> {
-                    makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                is RegistrationEvent.ShowMessage -> {
+                    snackBarHostState.showSnackbar(event.message)
                 }
             }
         }
     }
 
-    if (isOnboardingCompleted != null && isAuthenticated != null) {
+    // Экран ожидании инициализации сессии/DataStore
+    if (isOnboardingCompleted == null || isAuthenticated == null) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = Color(0xFF7CB342))
+        }
+    } else {
+        val startDestination = when {
+            isOnboardingCompleted == false -> Screens.Splash1.route
+            isAuthenticated == true -> Screens.Home.route
+            openLoginScreen -> Screens.RegistrationScreen2.route
+            else -> Screens.RegistrationScreen1.route
+        }
+
         NavHost(
             navController = navController,
-            startDestination = when {
-                isOnboardingCompleted == false -> Screens.Splash1.route
-                isAuthenticated == true -> Screens.Home.route
-                openLoginScreen -> Screens.RegistrationScreen2.route
-                else -> Screens.RegistrationScreen1.route
-            }
-
+            startDestination = startDestination
         ) {
             composable(Screens.Splash1.route) {
                 OnboardingScreen1(viewModel = onboardingViewModel)

@@ -50,7 +50,7 @@ class OnboardingRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveOnboardingCompleted(completed: Boolean) {
-        dataStoreManager.saveOnboardingCompleted(true)
+        dataStoreManager.saveOnboardingCompleted(completed)
     }
 
     override fun isOnboardingCompleted(): Flow<Boolean> {

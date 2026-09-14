@@ -2,8 +2,10 @@ package com.example.groceryapp.di
 
 import com.example.groceryapp.data.repository.AuthRepositoryImpl
 import com.example.groceryapp.data.repository.OnboardingRepositoryImpl
+import com.example.groceryapp.data.repository.ProductRepositoryImpl
 import com.example.groceryapp.domain.repository.AuthRepository
 import com.example.groceryapp.domain.repository.OnboardingRepository
+import com.example.groceryapp.domain.repository.ProductRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -22,4 +24,10 @@ abstract class RepositoryModule {
     abstract fun provideAuthRepository(
         authRepositoryImpl: AuthRepositoryImpl
     ): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun provideProductRepository(
+        productRepositoryImpl: ProductRepositoryImpl
+    ): ProductRepository
 }
