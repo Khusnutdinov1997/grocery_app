@@ -4,12 +4,15 @@ import com.example.groceryapp.domain.model.User
 import com.example.groceryapp.domain.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth
-): AuthRepository {
+) : AuthRepository {
 
     override suspend fun login(email: String, password: String): Result<User?> {
         return try {
@@ -33,7 +36,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getCurrentUser(): User?{
+    override fun getCurrentUser(): User? {
         return firebaseAuth.currentUser?.toDomainUser()
     }
 
@@ -41,7 +44,15 @@ class AuthRepositoryImpl @Inject constructor(
         firebaseAuth.signOut()
     }
 
-    private fun FirebaseUser.toDomainUser(): User{
+    override fun isAuthenticated(): Flow<Boolean> = callbackFlow {
+        val listener = FirebaseAuth.AuthStateListener { auth ->
+            trySend(auth.currentUser != null)
+        }
+        firebaseAuth.addAuthStateListener(listener)
+        awaitClose { firebaseAuth.removeAuthStateListener(listener) }
+    }
+
+    private fun FirebaseUser.toDomainUser(): User {
         return User(
             id = this.uid,
             email = this.email,

@@ -16,11 +16,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.groceryapp.MainViewModel
 import com.example.groceryapp.presentation.home.HomeScreen
 import com.example.groceryapp.presentation.onboarding.OnboardingEvent
-import com.example.groceryapp.presentation.onboarding.OnboardingScreen1
-import com.example.groceryapp.presentation.onboarding.OnboardingScreen2
+import com.example.groceryapp.presentation.onboarding.OnboardingScreen
 import com.example.groceryapp.presentation.onboarding.OnboardingViewModel
+import com.example.groceryapp.presentation.onboarding.TargetPage
 import com.example.groceryapp.presentation.registration.AuthEvent
 import com.example.groceryapp.presentation.registration.AuthViewModel
 import com.example.groceryapp.presentation.registration.RegistrationEvent
@@ -31,33 +32,14 @@ import com.example.groceryapp.presentation.registration.RegistrationViewModel
 import com.example.groceryapp.utils.Screens
 
 @Composable
-fun NavGraph() {
+fun NavGraph(
+    mainViewModel: MainViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel = hiltViewModel(),
+    registrationViewModel: RegistrationViewModel = hiltViewModel()
+) {
     val navController = rememberNavController()
     val snackBarHostState = remember { SnackbarHostState() }
-    val registrationViewModel: RegistrationViewModel = hiltViewModel()
-    val onboardingViewModel: OnboardingViewModel = hiltViewModel()
-    val authViewModel: AuthViewModel = hiltViewModel()
-
-    val isOnboardingCompleted by onboardingViewModel.isOnboardingCompleted.collectAsState()
-    val isAuthenticated by authViewModel.isAuthenticated.collectAsState()
-    val openLoginScreen by authViewModel.openLoginScreen.collectAsState()
-
-    LaunchedEffect(Unit) {
-        onboardingViewModel.events.collect { event ->
-            when (event) {
-                is OnboardingEvent.NavigateToNext -> {
-                    navController.navigate(Screens.Splash2.route)
-                }
-
-                is OnboardingEvent.NavigateToRegistration -> {
-                    navController.navigate(Screens.RegistrationScreen1.route) {
-                        popUpTo(Screens.Splash1.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                }
-            }
-        }
-    }
+    val startDestination by mainViewModel.startDestination.collectAsState()
 
     LaunchedEffect(Unit) {
         authViewModel.event.collect { event ->
@@ -104,7 +86,7 @@ fun NavGraph() {
     }
 
     // Экран ожидании инициализации сессии/DataStore
-    if (isOnboardingCompleted == null || isAuthenticated == null) {
+    if (startDestination == null) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -112,22 +94,39 @@ fun NavGraph() {
             CircularProgressIndicator(color = Color(0xFF7CB342))
         }
     } else {
-        val startDestination = when {
-            isOnboardingCompleted == false -> Screens.Splash1.route
-            isAuthenticated == true -> Screens.Home.route
-            openLoginScreen -> Screens.RegistrationScreen2.route
-            else -> Screens.RegistrationScreen1.route
-        }
 
         NavHost(
             navController = navController,
-            startDestination = startDestination
+            startDestination = startDestination!!
         ) {
             composable(Screens.Splash1.route) {
-                OnboardingScreen1(viewModel = onboardingViewModel)
+                OnboardingScreen(
+                    targetPage = TargetPage.FIRST,
+                    onNavigateToNext = {
+                        navController.navigate(Screens.Splash2.route)
+                    },
+                    onNavigateToRegistration = {
+                        navController.navigate(Screens.RegistrationScreen1.route){
+                            popUpTo(navController.graph.id){
+                                inclusive =true
+                            }
+                        }
+                    }
+                )
             }
             composable(Screens.Splash2.route) {
-                OnboardingScreen2(viewModel = onboardingViewModel)
+                OnboardingScreen(
+                    targetPage = TargetPage.SECOND,
+                    onNavigateToNext = {},
+                    onNavigateToRegistration = {
+                        navController.navigate(Screens.RegistrationScreen1.route){
+                            popUpTo(navController.graph.id){
+                                inclusive = true
+                            }
+                        }
+                    }
+                )
+
             }
             composable(Screens.RegistrationScreen1.route) {
                 RegistrationScreen1(viewModel = registrationViewModel)

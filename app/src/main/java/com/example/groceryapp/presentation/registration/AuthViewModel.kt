@@ -1,6 +1,5 @@
 package com.example.groceryapp.presentation.registration
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.groceryapp.domain.repository.AuthRepository
@@ -16,8 +15,6 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
-    private val _isAuthenticated = MutableStateFlow<Boolean?>(null)
-    val isAuthenticated = _isAuthenticated.asStateFlow()
 
     private val _openLoginScreen = MutableStateFlow(false)
     val openLoginScreen = _openLoginScreen.asStateFlow()
@@ -25,24 +22,12 @@ class AuthViewModel @Inject constructor(
     private val _event = Channel<AuthEvent>()
     val event = _event.receiveAsFlow()
 
-    init {
-        checkUserSession()
-    }
-
-    private fun checkUserSession() {
-        val currentUser = authRepository.getCurrentUser()
-        _isAuthenticated.value = currentUser != null
-        Log.d("AUTH_DEBAG", "User is logged in: ${currentUser != null}")
-    }
-
     fun onAuthSuccess() {
-        _isAuthenticated.value = true
         _openLoginScreen.value = false
     }
 
     fun logout() {
         authRepository.logout()
-        _isAuthenticated.value = false
         _openLoginScreen.value = true
         viewModelScope.launch {
             _event.send(AuthEvent.NavigateToLogin)
