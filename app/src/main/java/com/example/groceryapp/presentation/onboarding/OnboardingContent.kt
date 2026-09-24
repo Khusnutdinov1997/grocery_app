@@ -51,6 +51,11 @@ enum class OnboardingLayoutStyle {
     DOME
 }
 
+enum class TargetPage {
+    FIRST,
+    SECOND
+}
+
 @Composable
 fun OnboardingContent(
     pages: List<OnboardingPage>,
@@ -222,12 +227,15 @@ private fun PagerIndicator(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        repeat(pageSize){ index ->
-            Box(modifier = Modifier
-                .size(if (index == currentPage) 10.dp else 8.dp)
-                .clip(CircleShape)
-                .background(if (index == currentPage) MainGreen else LightGray)
+        repeat(pageSize) { index ->
+            Box(
+                modifier = Modifier
+                    .size(if (index == currentPage) 10.dp else 8.dp)
+                    .clip(CircleShape)
+                    .background(if (index == currentPage) MainGreen else LightGray)
             )
         }
     }
 }
+
+

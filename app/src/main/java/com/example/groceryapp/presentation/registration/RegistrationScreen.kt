@@ -57,6 +57,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.groceryapp.R
 import com.example.groceryapp.ui.theme.DarkGray
 import com.example.groceryapp.ui.theme.LightGray
@@ -67,7 +68,7 @@ import com.example.groceryapp.ui.theme.poppinsFontFamily
 
 @Composable
 fun RegistrationScreen1(
-    viewModel: RegistrationViewModel,
+    viewModel: RegistrationViewModel = hiltViewModel(),
 ) {
     RegistrationContent1(
         imageKey = "image_registration1",
@@ -207,7 +208,7 @@ fun RegistrationContent1(
 
 @Composable
 fun RegistrationScreen2(
-    viewModel: RegistrationViewModel,
+    viewModel: RegistrationViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.authState.collectAsState()
 

@@ -13,7 +13,7 @@ import javax.inject.Singleton
 class DataStoreManager @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
-    companion object{
+    companion object {
         private val COMPLETED_KEY = booleanPreferencesKey("onboarding_completed")
     }
 
