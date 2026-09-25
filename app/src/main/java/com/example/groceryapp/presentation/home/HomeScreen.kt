@@ -47,7 +47,7 @@ fun HomeScreen(
     homeViewModel: HomeViewModel = hiltViewModel(),
     onLogout: () -> Unit = {},
     onCategoryClick: (Category) -> Unit = {},
-    onProductClick: (Product) -> Unit = {}
+    onProductClick: (productId: String) -> Unit = {}
 ) {
     val uiState by homeViewModel.uiState.collectAsState()
 
@@ -70,7 +70,7 @@ fun HomeContent(
     isLoading: Boolean = false,
     onSearchQueryChange: (String) -> Unit = {},
     onCategoryClick: (Category) -> Unit = {},
-    onProductClick: (Product) -> Unit = {},
+    onProductClick: (productId: String) -> Unit = {},
     onFavoriteClick: (Product) -> Unit = {},
     onAddToCartClick: (Product) -> Unit = {}
 ) {
@@ -145,14 +145,16 @@ fun HomeContent(
                             product = pair[0],
                             modifier = Modifier.weight(1f),
                             onFavoriteClick = onFavoriteClick,
-                            onAddToCartClick = onAddToCartClick
+                            onAddToCartClick = onAddToCartClick,
+                            onProductClick = onProductClick
                         )
                         if (pair.size > 1) {
                             ProductCard(
                                 product = pair[1],
                                 modifier = Modifier.weight(1f),
                                 onFavoriteClick = onFavoriteClick,
-                                onAddToCartClick = onAddToCartClick
+                                onAddToCartClick = onAddToCartClick,
+                                onProductClick = onProductClick
                             )
                         } else {
                             Spacer(modifier = Modifier.weight(1f))
