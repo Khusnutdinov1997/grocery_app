@@ -32,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.groceryapp.R
 import com.example.groceryapp.domain.model.Category
 import com.example.groceryapp.domain.model.Product
@@ -47,9 +48,9 @@ fun HomeScreen(
     homeViewModel: HomeViewModel = hiltViewModel(),
     onLogout: () -> Unit = {},
     onCategoryClick: (Category) -> Unit = {},
-    onProductClick: (Product) -> Unit = {}
+    onProductClick: (productId: String) -> Unit = {}
 ) {
-    val uiState by homeViewModel.uiState.collectAsState()
+    val uiState by homeViewModel.uiState.collectAsStateWithLifecycle() // сбор данных идет не постоянно а только внутри жизненного цикла
 
     HomeContent(
         searchQuery = uiState.searchQuery,
@@ -70,7 +71,7 @@ fun HomeContent(
     isLoading: Boolean = false,
     onSearchQueryChange: (String) -> Unit = {},
     onCategoryClick: (Category) -> Unit = {},
-    onProductClick: (Product) -> Unit = {},
+    onProductClick: (productId: String) -> Unit = {},
     onFavoriteClick: (Product) -> Unit = {},
     onAddToCartClick: (Product) -> Unit = {}
 ) {
@@ -145,14 +146,16 @@ fun HomeContent(
                             product = pair[0],
                             modifier = Modifier.weight(1f),
                             onFavoriteClick = onFavoriteClick,
-                            onAddToCartClick = onAddToCartClick
+                            onAddToCartClick = onAddToCartClick,
+                            onProductClick = onProductClick
                         )
                         if (pair.size > 1) {
                             ProductCard(
                                 product = pair[1],
                                 modifier = Modifier.weight(1f),
                                 onFavoriteClick = onFavoriteClick,
-                                onAddToCartClick = onAddToCartClick
+                                onAddToCartClick = onAddToCartClick,
+                                onProductClick = onProductClick
                             )
                         } else {
                             Spacer(modifier = Modifier.weight(1f))

@@ -43,4 +43,22 @@ class ProductRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+    override suspend fun getProduct(productId: String) : Result<Product>{
+        return try {
+            val doc = firestore.collection("products")
+                .document(productId)
+                .get()
+                .await()
+            val product = doc.toObject(Product::class.java)
+                ?.copy(id = doc.id)
+            if (product != null) {
+                Result.success(product)
+            } else {
+                Result.failure(Exception("Product not found"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

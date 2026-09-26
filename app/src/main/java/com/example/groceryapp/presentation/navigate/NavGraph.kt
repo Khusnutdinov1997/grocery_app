@@ -13,14 +13,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.groceryapp.MainViewModel
+import com.example.groceryapp.presentation.ProductDetail.ProductDetailScreen
 import com.example.groceryapp.presentation.home.HomeScreen
-import com.example.groceryapp.presentation.onboarding.OnboardingEvent
 import com.example.groceryapp.presentation.onboarding.OnboardingScreen
-import com.example.groceryapp.presentation.onboarding.OnboardingViewModel
 import com.example.groceryapp.presentation.onboarding.TargetPage
 import com.example.groceryapp.presentation.registration.AuthEvent
 import com.example.groceryapp.presentation.registration.AuthViewModel
@@ -106,9 +107,9 @@ fun NavGraph(
                         navController.navigate(Screens.Splash2.route)
                     },
                     onNavigateToRegistration = {
-                        navController.navigate(Screens.RegistrationScreen1.route){
-                            popUpTo(navController.graph.id){
-                                inclusive =true
+                        navController.navigate(Screens.RegistrationScreen1.route) {
+                            popUpTo(navController.graph.id) {
+                                inclusive = true
                             }
                         }
                     }
@@ -119,8 +120,8 @@ fun NavGraph(
                     targetPage = TargetPage.SECOND,
                     onNavigateToNext = {},
                     onNavigateToRegistration = {
-                        navController.navigate(Screens.RegistrationScreen1.route){
-                            popUpTo(navController.graph.id){
+                        navController.navigate(Screens.RegistrationScreen1.route) {
+                            popUpTo(navController.graph.id) {
                                 inclusive = true
                             }
                         }
@@ -139,7 +140,29 @@ fun NavGraph(
             }
             composable(Screens.Home.route) {
                 HomeScreen(
-                    onLogout = authViewModel::logout
+                    onLogout = authViewModel::logout,
+                    onProductClick = { productId ->
+                        navController.navigate(
+                            Screens.ProductDetail.createRoute(productId)
+                        )
+                    }
+                )
+            }
+            composable(
+                route = Screens.ProductDetail.route,
+                arguments = listOf(
+                    navArgument(Screens.ProductDetail.ARG_PRODUCT_ID){
+                        type = NavType.StringType
+                    }
+                )
+            ) { backStackEntry ->
+                val productId  = backStackEntry.arguments
+                    ?.getString(Screens.ProductDetail.ARG_PRODUCT_ID)
+                    .orEmpty()
+
+                ProductDetailScreen(
+                    productId = productId,
+                    onBackClick = {navController.popBackStack()}
                 )
             }
         }
