@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import com.example.groceryapp.R
 import com.example.groceryapp.domain.model.Product
 import com.example.groceryapp.presentation.home.ProductImageMapper
+import com.example.groceryapp.utils.rememberAverageColor
 
 @Composable
 fun ProductCard(
@@ -45,6 +47,9 @@ fun ProductCard(
     onFavoriteClick: (Product) -> Unit,
     onAddToCartClick: (Product) -> Unit
 ) {
+
+    val imageRes = ProductImageMapper.imageKeyToRes(product.imageUrl)
+    val bgColor by rememberAverageColor(imageRes)
     Card(
         modifier = modifier,
         onClick = {onProductClick( product.id)},
@@ -98,11 +103,11 @@ fun ProductCard(
                     modifier = Modifier
                         .size(90.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFF5F5F5)),
+                        .background(bgColor),
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
-                        painter = painterResource(id = ProductImageMapper.imageKeyToRes(product.imageUrl)),
+                        painter = painterResource(id = imageRes),
                         contentDescription = null,
                         modifier = Modifier.size(70.dp),
                         contentScale = ContentScale.Fit

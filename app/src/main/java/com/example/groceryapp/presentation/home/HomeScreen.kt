@@ -32,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.groceryapp.R
 import com.example.groceryapp.domain.model.Category
 import com.example.groceryapp.domain.model.Product
@@ -49,7 +50,7 @@ fun HomeScreen(
     onCategoryClick: (Category) -> Unit = {},
     onProductClick: (productId: String) -> Unit = {}
 ) {
-    val uiState by homeViewModel.uiState.collectAsState()
+    val uiState by homeViewModel.uiState.collectAsStateWithLifecycle() // сбор данных идет не постоянно а только внутри жизненного цикла
 
     HomeContent(
         searchQuery = uiState.searchQuery,
