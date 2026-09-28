@@ -1,6 +1,8 @@
 package com.example.groceryapp.data.repository
 
 import com.example.groceryapp.domain.model.Product
+import com.example.groceryapp.domain.model.ProductDto
+import com.example.groceryapp.domain.model.toDomain
 import com.example.groceryapp.domain.repository.ProductRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -24,11 +26,9 @@ class ProductRepositoryImpl @Inject constructor(
                 }
 
                 val products = snapshot?.documents?.mapNotNull { doc ->
-                    doc.toObject(Product::class.java)?.copy(
-                        id = doc.id
-                    )
+                    doc.toObject(ProductDto::class.java)
                 } ?: emptyList()
-                trySend(products)
+                trySend(products.map { it.toDomain() })
             }
         awaitClose { listener.remove() }
     }
@@ -50,10 +50,9 @@ class ProductRepositoryImpl @Inject constructor(
                 .document(productId)
                 .get()
                 .await()
-            val product = doc.toObject(Product::class.java)
-                ?.copy(id = doc.id)
+            val product = doc.toObject(ProductDto::class.java)
             if (product != null) {
-                Result.success(product)
+                Result.success(product.toDomain())
             } else {
                 Result.failure(Exception("Product not found"))
             }

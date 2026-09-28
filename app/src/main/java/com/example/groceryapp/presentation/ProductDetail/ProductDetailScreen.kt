@@ -49,6 +49,7 @@ import com.example.groceryapp.domain.model.Product
 import com.example.groceryapp.presentation.home.ProductImageMapper
 import com.example.groceryapp.ui.theme.LightGray
 import com.example.groceryapp.utils.rememberAverageColor
+import com.google.firebase.Timestamp
 
 @Composable
 fun ProductDetailScreen(
@@ -324,7 +325,13 @@ fun ProductDetailPreview() {
         id = "1",
         name = "Fresh Peach",
         price = 0.0,
+        unit = "1 kg",
         imageUrl = R.drawable.peach.toString(),
+        categoryId = "fruits",
+        isNew = true,
+        discountPercent = null,
+        isFavorite = false,
+        createdAt = Timestamp.now()
     )
     ProductDetailContent(
         product = product,
