@@ -22,7 +22,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,12 +35,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.groceryapp.R
 import com.example.groceryapp.domain.model.Category
 import com.example.groceryapp.domain.model.Product
-import com.example.groceryapp.presentation.home.companent.CategoryItem
-import com.example.groceryapp.presentation.home.companent.HomeBottomNavigation
-import com.example.groceryapp.presentation.home.companent.ProductCard
-import com.example.groceryapp.presentation.home.companent.PromoBanner
-import com.example.groceryapp.presentation.home.companent.SearchBar
-import com.example.groceryapp.presentation.home.companent.SectionHeader
+import com.example.groceryapp.presentation.home.component.CategoryItem
+import com.example.groceryapp.presentation.home.component.HomeBottomNavigation
+import com.example.groceryapp.presentation.home.component.ProductCard
+import com.example.groceryapp.presentation.home.component.PromoBanner
+import com.example.groceryapp.presentation.home.component.SearchBar
+import com.example.groceryapp.presentation.home.component.SectionHeader
 
 @Composable
 fun HomeScreen(

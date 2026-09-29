@@ -1,9 +1,11 @@
 package com.example.groceryapp.di
 
 import com.example.groceryapp.data.repository.AuthRepositoryImpl
+import com.example.groceryapp.data.repository.CartRepositoryImpl
 import com.example.groceryapp.data.repository.OnboardingRepositoryImpl
 import com.example.groceryapp.data.repository.ProductRepositoryImpl
 import com.example.groceryapp.domain.repository.AuthRepository
+import com.example.groceryapp.domain.repository.CartRepository
 import com.example.groceryapp.domain.repository.OnboardingRepository
 import com.example.groceryapp.domain.repository.ProductRepository
 import dagger.Binds
@@ -30,4 +32,10 @@ abstract class RepositoryModule {
     abstract fun provideProductRepository(
         productRepositoryImpl: ProductRepositoryImpl
     ): ProductRepository
+
+    @Binds
+    @Singleton
+    abstract fun provideCartRepository(
+        cartRepositoryImpl: CartRepositoryImpl
+    ): CartRepository
 }

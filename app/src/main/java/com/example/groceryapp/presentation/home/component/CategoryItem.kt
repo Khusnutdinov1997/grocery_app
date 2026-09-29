@@ -1,4 +1,4 @@
-package com.example.groceryapp.presentation.home.companent
+package com.example.groceryapp.presentation.home.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
