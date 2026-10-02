@@ -3,6 +3,7 @@ package com.example.groceryapp.presentation.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.groceryapp.domain.model.Product
+import com.example.groceryapp.domain.repository.CartRepository
 import com.example.groceryapp.domain.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val cartRepository: CartRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState(isLoading = true))
@@ -27,6 +29,25 @@ class HomeViewModel @Inject constructor(
 
     init {
         observeProducts()
+    }
+
+    fun onAddToCart(product: Product) {
+        viewModelScope.launch {
+            val result = cartRepository.addToCart(product.id)
+            if (result.isSuccess) {
+                _homeUiEvent.send(
+                    HomeUiEvent.ShowMessage(
+                        "${product.name} added to cart!"
+                    )
+                )
+            } else {
+                _homeUiEvent.send(
+                    HomeUiEvent.ShowMessage(
+                        result.exceptionOrNull()?.message ?: "Failed to add item"
+                    )
+                )
+            }
+        }
     }
 
     private fun observeProducts() {

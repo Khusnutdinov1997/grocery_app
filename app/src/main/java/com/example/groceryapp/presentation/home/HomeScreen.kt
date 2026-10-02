@@ -47,7 +47,8 @@ fun HomeScreen(
     homeViewModel: HomeViewModel = hiltViewModel(),
     onLogout: () -> Unit = {},
     onCategoryClick: (Category) -> Unit = {},
-    onProductClick: (productId: String) -> Unit = {}
+    onProductClick: (productId: String) -> Unit = {},
+    onNavigateToCart: () -> Unit ={}
 ) {
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle() // сбор данных идет не постоянно а только внутри жизненного цикла
 
@@ -59,7 +60,8 @@ fun HomeScreen(
         onCategoryClick = onCategoryClick,
         onProductClick = onProductClick,
         onFavoriteClick = homeViewModel::onFavoriteClick,
-        onAddToCartClick = { /* TODO: Добавление в корзину */ }
+        onAddToCartClick = homeViewModel::onAddToCart,
+        onNavigateToCart = onNavigateToCart
     )
 }
 
@@ -72,13 +74,14 @@ fun HomeContent(
     onCategoryClick: (Category) -> Unit = {},
     onProductClick: (productId: String) -> Unit = {},
     onFavoriteClick: (Product) -> Unit = {},
-    onAddToCartClick: (Product) -> Unit = {}
+    onAddToCartClick: (Product) -> Unit = {},
+    onNavigateToCart: () -> Unit = {}
 ) {
     Scaffold(
         bottomBar = { HomeBottomNavigation() },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* TODO */ },
+                onClick =  onNavigateToCart,
                 containerColor = Color(0xFF7CB342),
                 shape = CircleShape,
                 modifier = Modifier

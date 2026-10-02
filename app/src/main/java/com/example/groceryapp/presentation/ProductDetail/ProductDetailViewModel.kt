@@ -2,6 +2,8 @@ package com.example.groceryapp.presentation.ProductDetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.groceryapp.domain.model.Product
+import com.example.groceryapp.domain.repository.CartRepository
 import com.example.groceryapp.domain.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,11 +14,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProductDetailViewModel @Inject constructor(
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val cartRepository: CartRepository
 ) : ViewModel() {
 
     private var _uiState = MutableStateFlow(ProductDetailUiState())
     val uiState = _uiState.asStateFlow()
+
+    fun onAddToCart() {
+        val currentProduct = uiState.value.product ?: return
+        val selectedQuantity = uiState.value.quantity
+        viewModelScope.launch {
+            cartRepository.updateQuantity(currentProduct.id, selectedQuantity)
+        }
+    }
 
     fun loadProduct(productId: String) {
         viewModelScope.launch {
@@ -45,11 +56,8 @@ class ProductDetailViewModel @Inject constructor(
 
     fun onDecreaseQuantity(){
         _uiState.update {state ->
-            state.copy(quantity = state.quantity - 1)
+            if (state.quantity > 1) state.copy(quantity = state.quantity - 1)
+            else state
         }
-    }
-
-    fun onAddToCart(){
-        //TODO
     }
 }

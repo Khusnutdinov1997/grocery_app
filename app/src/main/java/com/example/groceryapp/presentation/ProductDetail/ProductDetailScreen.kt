@@ -297,7 +297,7 @@ fun ProductDetailContent(
                 Spacer(Modifier.height(16.dp))
 
                 Button(
-                    onClick = onAddToCart,
+                    onClick = {onAddToCart()},
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),

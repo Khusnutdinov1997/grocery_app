@@ -20,6 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.groceryapp.MainViewModel
 import com.example.groceryapp.presentation.ProductDetail.ProductDetailScreen
+import com.example.groceryapp.presentation.cart.CartScreen
 import com.example.groceryapp.presentation.home.HomeScreen
 import com.example.groceryapp.presentation.onboarding.OnboardingScreen
 import com.example.groceryapp.presentation.onboarding.TargetPage
@@ -107,11 +108,7 @@ fun NavGraph(
                         navController.navigate(Screens.Splash2.route)
                     },
                     onNavigateToRegistration = {
-                        navController.navigate(Screens.RegistrationScreen1.route) {
-                            popUpTo(navController.graph.id) {
-                                inclusive = true
-                            }
-                        }
+                        navController.navigate(Screens.RegistrationScreen1.route)
                     }
                 )
             }
@@ -145,24 +142,42 @@ fun NavGraph(
                         navController.navigate(
                             Screens.ProductDetail.createRoute(productId)
                         )
+                    },
+                    onNavigateToCart = {
+                        navController.navigate(Screens.Cart.route) {
+                            popUpTo(Screens.Home.route) { inclusive = true }
+                        }
                     }
                 )
             }
             composable(
                 route = Screens.ProductDetail.route,
                 arguments = listOf(
-                    navArgument(Screens.ProductDetail.ARG_PRODUCT_ID){
+                    navArgument(Screens.ProductDetail.ARG_PRODUCT_ID) {
                         type = NavType.StringType
                     }
                 )
             ) { backStackEntry ->
-                val productId  = backStackEntry.arguments
+                val productId = backStackEntry.arguments
                     ?.getString(Screens.ProductDetail.ARG_PRODUCT_ID)
                     .orEmpty()
 
                 ProductDetailScreen(
                     productId = productId,
-                    onBackClick = {navController.popBackStack()}
+                    onBackClick = { navController.popBackStack() }
+                )
+            }
+            composable(Screens.Cart.route) {
+                CartScreen(
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onCheckoutClick = {},
+                    onNavigateToHome = {
+                        navController.navigate(Screens.Home.route) {
+                            popUpTo(Screens.Cart.route) { inclusive = true }
+                        }
+                    }
                 )
             }
         }

@@ -1,5 +1,6 @@
 package com.example.groceryapp.data.local.dao
 
+import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -7,6 +8,7 @@ import androidx.room.Update
 import com.example.groceryapp.data.local.CartEntity
 import kotlinx.coroutines.flow.Flow
 
+@Dao
 interface CartDao {
     @Query("SELECT * FROM cart_item")
     fun observeCart(): Flow<List<CartEntity>>
